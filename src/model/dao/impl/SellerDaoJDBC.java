@@ -55,12 +55,32 @@ public class SellerDaoJDBC implements SellerDao {
 		} finally {
 			DB.closeStatement(st);
 		}
-
 	}
 
 	@Override
 	public void update(Seller obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+
+		try {
+			st = conn.prepareStatement(
+					"UPDATE seller "
+					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? "
+					+ "WHERE Id = ?");
+
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getEmail());
+			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime()));
+			st.setDouble(4, obj.getBaseSalary());
+			st.setInt(5, obj.getDepartment().getId());
+			st.setInt(6, obj.getId());
+			
+			st.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
@@ -74,21 +94,34 @@ public class SellerDaoJDBC implements SellerDao {
 	public Seller findById(Integer id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
+		
 		try {
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "WHERE seller.Id = ?");
+			"SELECT seller.*,department.Name as DepName "
+			+ "FROM seller INNER JOIN department "
+			+ "ON seller.DepartmentId = department.Id "
+			+ "WHERE seller.Id = ?");
+			
 			st.setInt(1, id);
 			rs = st.executeQuery();
+			
 			if (rs.next()) {
-				Department dep = instantiateDepartment(rs);
+				Department dep = new Department();
+				dep.setId(rs.getInt("DepartmentID"));
+				dep.setName(rs.getNString("Depname"));
 
-				Seller sell = instantiateSeller(rs, dep);
-
+				Seller sell = new Seller();
+				sell.setId(rs.getInt("Id"));
+				sell.setName(rs.getString("Name"));
+				sell.setEmail(rs.getString("Email"));
+				sell.setBirthDate(rs.getDate("BirthDate"));
+				sell.setBaseSalary(rs.getDouble("BaseSalary"));
+				sell.setDepartment(dep);
 				return sell;
 
 			} else
 				return null;
+			
 		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		} finally {
