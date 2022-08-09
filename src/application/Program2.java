@@ -15,11 +15,15 @@ public class Program2 {
 		DepartmentDao departmentDao = DaoFactory.createDepartmentDao();
 		
 		
-		System.out.println("\n==== Test 1: department insert ====");
-		Department newDepartment = new Department (null, "Camping");
-		departmentDao.insert(newDepartment);
-		System.out.println("Inserted! New id = " + newDepartment.getId());
+		//System.out.println("\n==== Test 1: department insert ====");
+		//Department department = new Department (null, "Camping");
+		//departmentDao.insert(department);
+		//System.out.println("Inserted! New id = " + department.getId());
 		
+		
+		System.out.println("==== Test 2: seller findById ====");
+		Department department = departmentDao.findById(2);
+		System.out.println(department);
 	
 		sc.close();	
 	}
