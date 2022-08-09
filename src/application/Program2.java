@@ -21,9 +21,18 @@ public class Program2 {
 		//System.out.println("Inserted! New id = " + department.getId());
 		
 		
-		System.out.println("==== Test 2: seller findById ====");
+		System.out.println("==== Test 2: department findById ====");
 		Department department = departmentDao.findById(2);
 		System.out.println(department);
+		
+		
+		System.out.println("\n==== Test 2: department update ====");
+		department = departmentDao.findById(4);
+		System.out.println(department);
+		department.setName("Magazine and Books");
+		departmentDao.update(department);
+		System.out.println("Update Completed");
+
 	
 		sc.close();	
 	}
